@@ -1,0 +1,11 @@
+# COMPILE with PThread & C++11
+g++ main.cpp -o main -std=c++0x -pthread
+
+# RUN
+./main 
+
+# RUN 40 times
+for i in {1..40}; do ./main; done
+
+# RUN 1000 times
+for i in {1..1000}; do ./main; done | sort | uniq -c
