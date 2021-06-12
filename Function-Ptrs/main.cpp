@@ -30,11 +30,11 @@ T cube2( funcptr<T> func, T w )
    return func(w) * w;
 }
 
-// template <typename T>
-// T cube3( std::function< funcptr<T> > , T w )
-// { 
-//    return func(w) * w;
-// }
+template <template <typename> class Functor, typename W> 
+W cube3( Functor<W(W)> func, W w )
+{ 
+   return func(w) * w;
+}
 
 
 int main(int argc, const char * argv[]) {
@@ -55,7 +55,17 @@ int main(int argc, const char * argv[]) {
    std::cout<< "\n" << fPtrSquare(11.0) <<"\n";
    std::cout<< "\n" << cube1( fPtrSquare, 0.2f ) <<"\n";
    std::cout<< "\n" << cube2( fPtrSquare, 0.3f ) <<"\n";
-   //std::cout<< "\n" << cube3( fPtrSquare, 0.3f ) <<"\n";
+
+   // passing std::function as parameter
+   std::function<float(float)> fptrFloat = [](float a)->float{return a*a;};
+   std::function<double(double)> fptrDouble = [](double a)->double{return a*a;};
+   std::cout<< "\nCube3: " << cube3( fptrFloat, 0.3f ) <<"\n";
+   std::cout<< "\nCube3: " << cube3( fptrDouble, 0.4d ) <<"\n";
+   //std::cout<< "\nCube3: " << cube3( fPtrSquare, 0.2f ) <<"\n";
+
+   // int operation (int x, int y,int (*function)(int,int)){return function(x,y);}
+   // int operation2(int x, int y,std::function<int(int, int)> function){return function(x,y);}
+
 
    //---------   
    // Lambda: 
