@@ -144,13 +144,13 @@ int main(){
     {
         std::vector<S> vect;
         S l_Value;
-        // vect.push_back( l_Value );     
+        vect.push_back( l_Value );     
                 
         // Following statements call a move constructor instead of copy-constructor 
         // but still creates two objects as above.
         // Uncomment them to test.
 
-        vect.push_back( std::move(l_Value) );
+        // vect.push_back( std::move(l_Value) );
         // vect.push_back({1,2});   
         // vect.push_back( S(1) );     
     }
@@ -158,7 +158,9 @@ int main(){
     std::cout<<"\n\n-EMPLACE_BACK test with arguments (CORRECT WAY)";
     {
         std::vector<S> vect;
-        vect.emplace_back( 1,2 );   // pass constructor argumnets directly, to create object in-place in the vector.
+        vect.emplace_back( 1,2 );   // passes arguments of the constructor of S, 
+                                    // instead of an object of S.
+                                    // This creates an object in-place inside the vector.
 
         // WRONG WAY of using Emplace_back.
         // 
