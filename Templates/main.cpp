@@ -45,7 +45,7 @@ constexpr T pi = T(3.14159265358979323846264338327950288419716939937510582097494
 
 
 // Example 4:   Template Template parameter.
-// The following function resequence() takes a container one type e.g. std::vector
+// The following function resequence() takes a container of one type e.g. std::vector
 // and converts it into a container of another type eg. std::deque.
 // e.g. a call like:
 //    const std::vector<int> v { 1, 2, 3, 4, 5 };
@@ -78,9 +78,7 @@ Out_container<T...> resequence(const In_container<T...>& in_container)
     return out_container;
 }
 
-// Example 5:   Template Template parameter.
-// The following function resequence() takes a container one type e.g. std::vector
-// and converts it into a container of another type eg. std::deque.
+// Example 5:   Template Meta Programming.
 
 template <int N>
 struct Factorial

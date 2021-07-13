@@ -150,7 +150,7 @@ int main() {
 
         Child c;        // OK    :  Child::F3() exists
         c.F1();         // OK    :  Base::F1 will be called.
-        c.F2();         // OK    :  Child::F2 will be called.
+        c.F2();         // OK    :  Child::F2 will be called.      
 
     }   // ~Child() destructor will get called when c goes out of scope.
         // ~Child() will give a call to ~Base()

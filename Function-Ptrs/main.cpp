@@ -15,9 +15,9 @@ T square(T len){
 
 // a function that takes function-ptr as argument
 template <typename T>
-T cube1( T (*square)(T), T w )
+T cube1( T (*square)(T), T len )
 {
-   return square(w) * w;
+   return square(len) * len;
 }
 
 // function-ptr typedef
@@ -30,8 +30,8 @@ T cube2( funcptr<T> func, T w )
    return func(w) * w;
 }
 
-template <template <typename> class Functor, typename W> 
-W cube3( Functor<W(W)> func, W w )
+template <typename W> 
+W cube3( std::function<W(W)> func, W w )
 { 
    return func(w) * w;
 }

@@ -1,9 +1,11 @@
 
 // #include <iostream>
 // #include <vector>
-#include <bits/stdc++.h>  // Works with GCC, includes all standard headers 
+#include <bits/stdc++.h> // Works with GCC, includes all standard headers
 
-class Base { };
+class Base
+{
+};
 
 /*
 *************************
@@ -28,15 +30,16 @@ class Base { };
 
 */
 
-#define deb(x) std::cout<<#x<<": "<<x<<"\n";
+#define deb(x) std::cout << #x << ": " << x << "\n";
 
 //  FOLD Expressions - C++17
-template<typename... T>
-void print(T&... args){
-    ( (std::cout<<args), ...);
+template <typename... T>
+void print(T &...args)
+{
+    ((std::cout << args), ...);
 }
 
-int main() 
+int main()
 {
     int x(100);
 
