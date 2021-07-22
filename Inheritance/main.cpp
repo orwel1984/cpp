@@ -52,7 +52,7 @@ Private Inheritance −           class Child : private Base {}
         - b.func() will be mapped to "Child::func()" at "run-time".
  
 - V-pointer:
-  If a class has one or more virtual functions, the compiler puts a hidden pointer 
+  If a class has one or more virtual functions, the compiler puts a hidden pointer as a member-variable
   in the top level Base class called a “virtual-pointer” or “v-pointer.”
 
 - V-Table:
@@ -92,7 +92,7 @@ Private Inheritance −           class Child : private Base {}
   class GrandChild: public Child1, public Child2 {}
 
   - In the case above the Grandchild will inherit two copies of func(): Child1::func() & Child-2::func()
-    This will create ambiguity for the compuler 
+    This will create ambiguity for the compiler 
 
   - Virtual Inheritance: 
 

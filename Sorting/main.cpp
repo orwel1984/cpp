@@ -31,7 +31,7 @@
     O(N):   Complexity grows linearly with the input size.
             Usually the case of a single for-loop
 
-    O(N^2): Complexity grows linearly with the input size.
+    O(N^2): Complexity grows quadritaclly with the input size.
             Usually the case with two nested for-loops            
 
     O(logN):    Complexity grows at log(N) rate. 
@@ -67,7 +67,7 @@ void PrintArray(std::vector<T>& v)
 // and compare each element with all the rest for 
 // being the smallest. 
 // 
-// if A[i] < A[k] for k=[i=1, N-1] then
+// if A[i] < A[k] for k=[1, N-1] then
 // swap(A[i], A[k]) is called. And then the loop contiues as 
 // normal for the rest of the loop k.
 // 
@@ -86,8 +86,8 @@ void PrintArray(std::vector<T>& v)
 //----------------------------------------------------
 //
 // Goes over all elements of the array A[i] from i=[0, N-1]
-// checks if v[i] > v[i+1] then swap(v[i], v[i+1])
-// ( it only checks the adjacent elements.
+// checks adjacent elements, 
+//  if v[i] > v[i+1] then swap(v[i], v[i+1])
 // 
 // After going over the entire list once, the largest element 
 // in the list pops-out (or bubbles out) at the right-end 
@@ -274,6 +274,22 @@ void Merge(std::vector<T>& A,
 //----------------------------------------------------
 // Quick Sort
 //----------------------------------------------------
+// Works on the idea, 
+// that all elements greater than  some Pivot element
+// are on the Right side 
+// and all elements smaller than Pivot are on the Left.
+//
+// Then the algorithm subdivides the problem 
+// using recursive Divide-n-Conquer and sorts each subproblem.
+//
+// One aspect of the problem is to find the right position of
+// the Pivot. This is done in the Parition() function below.
+// It uses a simple algorithm with two pointers low & high.
+// It increments low++ and decrements high-- until they meet.
+// And this gives the locaiton of the pivot.
+// This function also sorts the elements around the Pivot while
+// searching for the pivot locaiton.
+// 
 // Worst Case Time Complexity : O(n*n)
 // Best Case Time Complexity  : O(n*log n)
 // Average Time Complexity    : O(n*log n)
