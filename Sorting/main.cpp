@@ -294,31 +294,54 @@ void Merge(std::vector<T>& A,
 // Best Case Time Complexity  : O(n*log n)
 // Average Time Complexity    : O(n*log n)
 // Space Complexity           : O(1)
+
+/* 
+    This function takes last element A[high] as pivot, 
+    places all smaller elements less than pivot to left of it and 
+    all greater elements to right of pivot. 
+*/
+
 template <typename T>
-int Partition(std::vector<T>& v, int low, int high)
+int Partition(std::vector<T>& A, int low, int high)
 {
-    for(; low!=high; ){
-        
-        if(v[low]>v[high]){
-            std::swap(v[low],v[high]);
-            ++high;  // increment Right pointer after swap
+    int store = high;
+    int pivot = A[high];
+
+    for(; low<high; ){
+
+        // keep looking on the left-side for >pivot
+        while(A[low] < pivot && low<=high){ 
+            ++low;
         }
-        else{
-            ++low;  // increment Left pointer after no-swap
+
+        // keep looking on the right-side for <pivot
+        while(A[high] >= pivot && low<high){ 
+            --high;
         }
+
+        if(low >= high){
+            break;
+        }
+
+        // it has found elements that need to be swapped
+        std::swap(A[low],A[high]);
     }
+
+    // swap in the pivot with low = high 
+    if(low < store ){   // if pivot is already the largest element then no swap needed.
+        std::swap(A[low], A[store]);
+    }
+
     return low;
 }
 
 template <typename T>
-void QuickSort(std::vector<T>& v, int low, int high)
+void QuickSort(std::vector<T>& A, int low, int high)
 {
     if(low < high){
-        int pivot = Partition(v, low, high);
-        QuickSort(v, low,     pivot-1);
-        QuickSort(v, pivot+1, high );
-    } else{
-        return;
+        int pivot = Partition(A, low, high);
+        QuickSort(A, low,     pivot-1);
+        QuickSort(A, pivot+1, high );
     }
 }
 
