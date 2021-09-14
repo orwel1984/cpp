@@ -52,6 +52,15 @@ void square(int& accum, int x) {
     accum = temp;
 }
 
+/**
+ * @brief   An example program to introduce the concepts of threads.
+ *          It creates a pool of threads in a std container and waits for them to join
+ *          the main thread.
+ * 
+ * @return Returns 0 when execution completes successfully.
+ * 
+ */
+
 int main() {
     
     int accum = 0;          // final result

@@ -5,7 +5,7 @@
 /*
     std::vector represents a "contiguous array" of data elements, allocated on the heap instead of the stack. 
     This allows us to resize the array dynamically -- compared to std::array where the size of the array is fixed. 
-    (as std::array is simply a wrapper around normal C-style array [] on stack)
+    (as std::array is simply a wrapper around normal C-style array [] on "Stack")
 
     The std::vector::size():        gives the total elements contained in the vector.    
     
@@ -45,11 +45,14 @@
     The most common method used to insert elements in the vector is the push_back().
     See the main() function below for details on how push_back() differs from emplace_back();
 
-    NOTE:
-    std::vector< T* > and std::vector< std::unique_ptr<T> > is possible .
-    but std::vector< T& > is ill-formed and should not be used.
+    NOTES:
+    -   std::vector< T* > and std::vector< std::unique_ptr<T> > is possible .
+        but std::vector< T& > is ill-formed and should not be used.
 
+    -   std::reference_wrapper is used to create a std::vector of references.
 
+    -   std::vector<bool> is a special case. It is not an STL container and should be 
+        avoided (Scott Meyers's book Effective STL). It stores bits of data rather than arrays of bools.
 
 */
 
