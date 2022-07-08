@@ -126,34 +126,40 @@ int main(){
 
     // we need to see how objects are copied or moved when using emplace_back vs push_back. 
     struct S{
-        // a simple class which does'nt have any internal data.
+        // a simple class which does'nt have any "move-able data".
 
-        S()         {std::cout<<"\nS()";}
-        S(const S&) {std::cout<<"\nS(const S&)";}    // copy-const
-        S(S&&)      {std::cout<<"\nS(S&&)";}         // move-const   
-        ~S()        {std::cout<<"\n~S()";}           // destructor
+        S():x(0),y(0)   {std::cout<<"\nS(0,0)";}
+        S(S const & s)     {std::cout<<"\nS(const S&)"; x = s.x; y=s.y;}    // copy-const
+        S(S && s)          {std::cout<<"\nS(S&&)"; x = s.x; y=s.y; } // move-const   
+        ~S()            {std::cout<<"\n~S()";}           // destructor
         
         S& operator=(const S& other)  {std::cout<<"\nOperator="; return *this;}
         S& operator=(S&& other)       {std::cout<<"\nOperator="; return *this;}
 
         // additional custom constructors with parameters
-        S(int x)           {std::cout<<"\nS(x)";}
-        S(int x, int y)    {std::cout<<"\nS(x,y)";}
+        S(int x):x(x),y(0) {std::cout<<"\nS(x)";}
+        S(int x, int y):x(x),y(y)    {std::cout<<"\nS(x,y)";}
 
+        // members
+        int x;
+        int y;
     };
 
 
     std::cout<<"\n\n-PUSH_BACK test with L-Value or R-Value";
     {
         std::vector<S> vect;
-        S l_Value;
-        vect.push_back( l_Value );     
+        S l_Value = {1,1};
+        //vect.push_back( l_Value );     
                 
         // Following statements call a move constructor instead of copy-constructor 
-        // but still creates two objects as above.
+        // but still creates two objects as above. Because S does'nt have any internal data which 
+        // can take advantage of move constructor. It's just a bunch of int's.
+        // But if it had another vector or list of items, it could be faster.
+
         // Uncomment them to test.
 
-        // vect.push_back( std::move(l_Value) );
+        vect.push_back( std::move(l_Value) );
         // vect.push_back({1,2});   
         // vect.push_back( S(1) );     
     }
