@@ -21,7 +21,7 @@ class Base
             Base(const Base& ) {}               // copy contructor
             Base& operator= (const Base& ) {}   // copy assignment
             
-            // since C++1            
+            // since C++11
             Base(Base&& ) {}                    // move contructor
             Base& operator= (Base&& ) {}        // move assignment
 

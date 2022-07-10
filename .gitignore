@@ -1,5 +1,7 @@
-*	# Ignore all
-!*.*	# Unignore all with extensions
-!*/	# Unignore all dirs
-
-
+## Ignore all binaries
+# Ignore all
+*   
+# Unignore all with extensions
+!*.*
+# Unignore all dirs
+!*/

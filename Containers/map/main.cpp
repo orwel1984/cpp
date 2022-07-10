@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <unordered_map>
 #include <algorithm>
 #include <string>
 
@@ -82,13 +83,52 @@ int main()
                                 {"Zebra",  45615}, 
                                 {"Heckle",  45615}, 
                                 {"Jackel",  43135}, 
+                                {"Jackel",  678697}, 
                             };
 
-    // elements will output sorted.
+    // elements will output sorted as sorted pairs and 
+    // duplicate key such as the last "Jackel" will be ignored
     std::cout<<std::endl;
     for(auto contact:   contacts){
         std::cout<< contact.first << " , " << contact.second <<std::endl;
     }
+
+
+
+    // Note: braced initailization syntax
+    std::unordered_multimap< char, int> charPositionMap{  
+                                {'a',  1}, 
+                                {'b',  2}, 
+                                {'c',  3}, 
+                                {'c',  4}, 
+                                {'d',  5}, 
+                                {'c',  6}, 
+                                {'e',  7}, 
+                            };
+
+    // print total elements with key = 'c'
+    auto result = charPositionMap.equal_range('c');
+    int count = std::distance( result.first, result.second );
+    std::cout << std::endl << "\nTotal Keys for 'c': " << count << std::endl;
+
+    // print all elements for key='c':  should print 6,4,3 for example above
+
+    // Print All Elements: METHOD #1 - Naive
+    // for(auto it = result.first; it!=result.second; it++){
+    //     std::cout<< it->first << " , " << it->second <<std::endl;
+    // }
+
+    // Print All Elements: METHOD #2 - Stl algorithms & C++11
+    // auto print = []( std::pair< const char, int>& pair){ 
+    //     std::cout<< pair.first << " , " << pair.second <<std::endl; 
+    // };
+    
+    // Print All Elements: METHOD #3 - Stl algorithms & C++14
+    auto lambda = [&](const auto & p){
+        std::cout<< p.first << " , " << p.second <<std::endl; 
+    };
+
+    std::for_each( result.first, result.second, lambda);
 
     return 0;
 }

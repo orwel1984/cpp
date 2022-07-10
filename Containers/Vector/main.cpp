@@ -5,7 +5,7 @@
 /*
     std::vector represents a "contiguous array" of data elements, allocated on the heap instead of the stack. 
     This allows us to resize the array dynamically -- compared to std::array where the size of the array is fixed. 
-    (as std::array is simply a wrapper around normal C-style array [] on stack)
+    (as std::array is simply a wrapper around normal C-style array [] on "Stack")
 
     The std::vector::size():        gives the total elements contained in the vector.    
     
@@ -45,11 +45,14 @@
     The most common method used to insert elements in the vector is the push_back().
     See the main() function below for details on how push_back() differs from emplace_back();
 
-    NOTE:
-    std::vector< T* > and std::vector< std::unique_ptr<T> > is possible .
-    but std::vector< T& > is ill-formed and should not be used.
+    NOTES:
+    -   std::vector< T* > and std::vector< std::unique_ptr<T> > is possible .
+        but std::vector< T& > is ill-formed and should not be used.
 
+    -   std::reference_wrapper is used to create a std::vector of references.
 
+    -   std::vector<bool> is a special case. It is not an STL container and should be 
+        avoided (Scott Meyers's book Effective STL). It stores bits of data rather than arrays of bools.
 
 */
 
@@ -123,34 +126,40 @@ int main(){
 
     // we need to see how objects are copied or moved when using emplace_back vs push_back. 
     struct S{
-        // a simple class which does'nt have any internal data.
+        // a simple class which does'nt have any "move-able data".
 
-        S()         {std::cout<<"\nS()";}
-        S(const S&) {std::cout<<"\nS(const S&)";}    // copy-const
-        S(S&&)      {std::cout<<"\nS(S&&)";}         // move-const   
-        ~S()        {std::cout<<"\n~S()";}           // destructor
+        S():x(0),y(0)   {std::cout<<"\nS(0,0)";}
+        S(S const & s)     {std::cout<<"\nS(const S&)"; x = s.x; y=s.y;}    // copy-const
+        S(S && s)          {std::cout<<"\nS(S&&)"; x = s.x; y=s.y; } // move-const   
+        ~S()            {std::cout<<"\n~S()";}           // destructor
         
         S& operator=(const S& other)  {std::cout<<"\nOperator="; return *this;}
         S& operator=(S&& other)       {std::cout<<"\nOperator="; return *this;}
 
         // additional custom constructors with parameters
-        S(int x)           {std::cout<<"\nS(x)";}
-        S(int x, int y)    {std::cout<<"\nS(x,y)";}
+        S(int x):x(x),y(0) {std::cout<<"\nS(x)";}
+        S(int x, int y):x(x),y(y)    {std::cout<<"\nS(x,y)";}
 
+        // members
+        int x;
+        int y;
     };
 
 
     std::cout<<"\n\n-PUSH_BACK test with L-Value or R-Value";
     {
         std::vector<S> vect;
-        S l_Value;
-        vect.push_back( l_Value );     
+        S l_Value = {1,1};
+        //vect.push_back( l_Value );     
                 
         // Following statements call a move constructor instead of copy-constructor 
-        // but still creates two objects as above.
+        // but still creates two objects as above. Because S does'nt have any internal data which 
+        // can take advantage of move constructor. It's just a bunch of int's.
+        // But if it had another vector or list of items, it could be faster.
+
         // Uncomment them to test.
 
-        // vect.push_back( std::move(l_Value) );
+        vect.push_back( std::move(l_Value) );
         // vect.push_back({1,2});   
         // vect.push_back( S(1) );     
     }

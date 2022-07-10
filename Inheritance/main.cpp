@@ -6,7 +6,7 @@
   1. Inheritance:
 *************************
 
-- Provides a way to reuse the definition of a Base class.
+- Provides a way to reuse the definition of a Base class and extend it.
 
       class Base { }
 
