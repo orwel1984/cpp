@@ -110,6 +110,7 @@ struct Factorial<0>
 //    }
 //
 //  We can restrict it to only float/double types using SFINAE.
+//  A better example using Type-Traits comes later.
 template <typename T>   struct restrictor { };
 template<>              struct restrictor<float>    { typedef float result; };
 template<>              struct restrictor<double>   { typedef double result; };
@@ -290,16 +291,109 @@ public:
 } // namespace ali
 
 //-----------------------------------------------------
-// Example 10: 
-// Type Traits
+// Example 12: 
+// Type Traits:
+// 1. Query characteristics of the template type T
+// 2. Template specialization is pattern matching
+// How it works?
+// We define some templated class with a single static 
+// boolean value set to false. Then in the specialization
+// of the template we set it to True. 
+// Libraries:
+// Boost.TypeTraits
+// C++11 <type_traits>
 //-----------------------------------------------------
 
+// Ex1: Is type an int
+// --------
+template <typename T>
+struct is_int
+{
+    // define a static boolean flag constant set to false.
+    static const bool value = false;
+};
+
+// specialize the template with empty <> for int
+template <>
+struct is_int<int>
+{
+    // set static boolean to true in specialized case
+    static const bool value = true;
+};
+
+// USAGE:
+// is_int<float>:: value
+// is_int<int>:: value
+
+// Ex2: Are two types the same
+// --------
+template <typename T1, typename T2>
+struct is_same
+{
+    // define a static boolean flag constant set to false.
+    static const bool value = false;
+};
+
+// specialize the template for same types
+template <typename T>
+struct is_same<T,T>
+{
+    // set static boolean to true in specialized case
+    static const bool value = true;
+};
+
+// USAGE:
+// is_same<float, int>:: value
+// is_same<int, int>:: value
+// is_same<int, SomeObject>:: value
+
+// Ex3: Is the type an std::shared_ptr<T> type
+// --------
+template <typename T>
+struct is_shared_ptr
+{
+    // define a static boolean flag constant set to false.
+    static const bool value = false;
+};
+
+// specialize the template with empty <> for int
+template <typename T>
+struct is_shared_ptr< std::shared_ptr<T> >
+{
+    // set static boolean to true in specialized case
+    static const bool value = true;
+};
 
 //-----------------------------------------------------
-// Example 11: 
+// Example 13: 
 // SFINAE
 // Substituion Failure Is Not an Error
+// SFINAE uses type traits at compile time to discard 
+// template overloads that fail a certain condition.
+// See https://www.youtube.com/watch?v=VvbTP_k_Df4
+// Note: 
+//      std::enable_if<true, R>::type is an alias for R
 //-----------------------------------------------------
+
+// The following func() will return:
+//   1 for any integral type.
+//   2 for any double type
+//   0 for all else
+
+template <typename ... T>
+auto func(T ... args) {
+ return 0;
+}
+
+template <typename T>
+typename std::enable_if<std::is_integral<T>::value, int>::type
+func(T val){
+    return 1;
+}
+
+int func(double val){
+    return 2;
+}
 
 //-----------------------------------------------------
 //-----------------------------------------------------
@@ -389,6 +483,15 @@ int main(int argc, const char * argv[])
    auto clone = shape.clone();
    std::cout<< "\n" <<"clone's area:" << clone->area << "\n";
 
+   std::cout <<"\n-----------------------";
+   std::cout <<"\nExample 13:- SFINAE with std::enable_if";
+   std::cout <<"\n-----------------------";
+   std::cout<< "\n" <<"func(1) with int param:" << func(1) << "\n";
+   std::cout<< "\n" <<"func(1.0) with double param:" << func(1.0) << "\n";
+   std::cout<< "\n" <<"func(1.0f) with float param:" << func(1.0f) << "\n";
+
+//    auto ptr = std::make_shared<int>(int(100));
+//    std::cout<< "\n" <<"clone's area:" << is_shared_ptr(ptr)::value << "\n";
 
    return 0;
 }
