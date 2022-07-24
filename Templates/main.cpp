@@ -10,6 +10,7 @@
 #include <vector>
 #include <deque>
 #include <cmath>
+#include <memory>
 
 
 // Example 1: TEMPLATE CLASS EXAMPLE
@@ -65,7 +66,10 @@ Out_container<T> resequence(const In_container<T>& in_container)
 }
 
 // Form 2: non-variadic
-// The following form works with std::vector, since std::vector isn't a container that receive one type template parameter; it's a container that receive two type template parameter (the second one with a default type: std::allocator<T> where T is the first one). So change above to more flexible container with an variadic list of template types of arguments
+// The following form works with std::vector, since std::vector isn't a container that 
+// receive one type template parameter; it's a container that receive two type template 
+// parameter (the second one with a default type: std::allocator<T> where T is the first one). 
+// So change above to more flexible container with an variadic list of template types of arguments
 template <  template <typename...> class Out_container,
             template <typename...> class In_container,
             typename... T>
@@ -176,6 +180,129 @@ auto makeGroup(T&& ... t) {
    return Group<T ...>(std::forward<T>(t) ...);
 }
 
+//-----------------------------------------------------
+// Example 9: CRTP - Static Polymorphism
+//  
+// Curiously Recurring Template Pattern
+// In This example we will use Static Polymorphism which
+// is based on CRTP pattern for templates.
+//-----------------------------------------------------
+template <class Derived>
+struct Base
+{
+    //public interface
+    void interface()
+    {
+        // calls a Derived::implementation() method, 
+        // which is not even a member of the Base class.
+        // ( but has to be a public method in Derived )
+        static_cast<Derived*>(this)->implementation();
+    }
+};
+
+class Derived : public Base<Derived>
+{
+public:
+    void implementation()
+    {
+        std::cout<<"\nCalling Derived::implementation();\n\n";
+    }
+};
+
+// USAGE:
+// Derived derived;
+// derived.interface();
+
+//-----------------------------------------------------
+// Example 10: CRTP - Inject Behaviour 1 - Cloneable
+//  
+// Curiously Recurring Template Pattern
+// In This example we will show how CRTP can inject 
+// behaviour into the derived classes.
+// e.g. we can inject a clone() method into any object, 
+// which is able to return a copy of the concrete-type 
+// with a single implementation in one base class.
+//-----------------------------------------------------
+
+template <class Derived>
+struct Cloneable
+{
+    Derived* clone()
+    {
+        // following line is calling the copy constructor:
+        // Derived::Derived(Derived const &)
+        // by casting the (*this) into a const-ref
+        return new Derived( static_cast<Derived const&>(*this) );        
+    }
+};
+
+struct Shape : Cloneable<Shape>
+{
+    int area = {0};
+};
+// USAGE:
+// Shape shape;
+// shape.area = 100;
+// auto clone = shape.clone();
+
+//-----------------------------------------------------
+// Example 11: CRTP - Inject Behaviour 2 - enable_shared_from_this 
+//  
+// This example shows a sample implementation of 
+// enabled_shared_from_this.
+// See https://www.youtube.com/watch?v=9TFV2JxX7L0
+// Any class T which inheirts from ali::enable_shared_from_this<T>
+// will get injected a shared_from_this(); function with a weak_ptr.
+// Note: The derived class T using enabled_shared_from_this must ensure,
+// that it's object is only managed by std::shared_ptr<T>.
+// It can do so by making it's constructor private and provide a static 
+// factory method to ensure that some shared_ptr with a control-block 
+// is already pointing to this object (see Meyers )
+//-----------------------------------------------------
+
+namespace ali{
+
+template <class T>
+struct enable_shared_from_this
+{
+private:
+    // define a private weak_ptr field
+    mutable std::weak_ptr<T> weak_this_;
+
+public:
+    std::shared_ptr<T> 
+    shared_from_this()
+    {
+        // create a new shared ptr from the weak_ptr
+        std::shared_ptr<T> p(weak_this_);
+        return p;
+    }
+
+    // following function is just the const version of the above
+    std::shared_ptr<T const> 
+    shared_from_this() const
+    {
+        std::shared_ptr<T const> p(weak_this_);
+        return p;
+    }
+
+};
+} // namespace ali
+
+//-----------------------------------------------------
+// Example 10: 
+// Type Traits
+//-----------------------------------------------------
+
+
+//-----------------------------------------------------
+// Example 11: 
+// SFINAE
+// Substituion Failure Is Not an Error
+//-----------------------------------------------------
+
+//-----------------------------------------------------
+//-----------------------------------------------------
 int main(int argc, const char * argv[]) 
 {
     
@@ -246,6 +373,22 @@ int main(int argc, const char * argv[])
    std::cout<< std::endl << static_cast<std::string>(g) << std::endl ;
    std::cout<< std::endl <<         static_cast<int>(g) << std::endl ;
    std::cout<< std::endl <<      static_cast<double>(g) << std::endl ;
-    
+
+
+   std::cout <<"\n-----------------------";
+   std::cout <<"\nExample 9:-";
+   std::cout <<"\n-----------------------";
+   Derived derived;
+   derived.interface();
+
+   std::cout <<"\n-----------------------";
+   std::cout <<"\nExample 10:-";
+   std::cout <<"\n-----------------------";
+   Shape shape;
+   shape.area = 100;
+   auto clone = shape.clone();
+   std::cout<< "\n" <<"clone's area:" << clone->area << "\n";
+
+
    return 0;
 }
