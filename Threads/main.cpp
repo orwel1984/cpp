@@ -1,6 +1,7 @@
 /*
 
-    Processes & Threads: 
+    -----------------------
+    Processes
     -----------------------
 
     The most central concept in any operating system is the 
@@ -12,15 +13,70 @@
 
     - Process Creation:
     Process creation happens on system startup and later when
-    evrytime the process creation SystemCall is executed.
-
+    every time the process creation SystemCall is executed.
     Processes that stay in the background to handle some activity 
     such as emails, printing, and so on are called daemons.
 
-    - Process Termination:
-    Process creation happens on system startup and later when
-    the process creation System-Call is executed.
+    - In distributed programming an application consists of 
+    multiple processes cooperate together over different hosts
+    machine.
 
+
+    -----------------------
+    Threads
+    -----------------------
+    -   A thread is a sequence of instructions, 
+        given to the CPU by an application process.
+
+    -   Hardware & Software Threads:   
+
+    -   Hardware-Threads:
+        ------------------
+        A single core of the CPU can run one 
+        only one instruction of one thread at any one time.
+        The threads that directly run instructions on the CPU core
+        are called Hardware Threads.
+
+        -   The total no. of Hardware Threads determine how many 
+            threads can actually run in parallel on a system.
+
+        -   Hyper-Threading: This is a hardware feature by which 
+            each core can run multiple hardware threads, thus appearing 
+            to the OS as if more physical cores are present on the system.
+            (First introduced in Intel Pentium 4)
+
+    -   Software-Threads:
+        ------------------
+        These are the threads which the OS manages across the entire 
+        system for all processes/applications.
+        -   The OS schedules Software-Threads for execution on Hardware-Threads.
+        -   It is possible to create more Software Threads than 
+            the no. of available Hardware Threads on a system. 
+            But the Total no. of Software-Threads is also a 
+            limited resource.
+
+        -   OverSubscription:
+            When more Software-Threads are ready to run than the total no. of available 
+            Hardware Threads. This is a problem because it leads to threads sitting idle.
+
+        -   Thread-Scheduler:
+            This is an important component of the OS which deals with 
+            scheduling Software-Threads on the hardware.            
+            -   Thread-Pools: 
+                modern schedulers use system-wide thread pools, which deals with
+                problems like oversubscription, load-balancing etc. through
+                work-stealing algorithms.
+
+    -----------------------
+    std::thread
+    -----------------------
+    -   Objects of this class  
+
+    -----------------------
+    Callbacks
+    -----------------------
+    A callback function is a function passed into another function as an argument.
+    The callback is then invoked later to signal completion of some kind of routine or action.
 
     Compile Instrunctions:
     -   g++ main.cpp -o main -std=c++0x -pthread
@@ -33,8 +89,7 @@
 
         And also using bash script:
         -   for i in {1..1000}; do ./main; done | sort | uniq -c
-        
-    
+
 */
 
 #include <iostream>

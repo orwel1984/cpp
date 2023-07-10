@@ -25,6 +25,12 @@ private:
     T a_[2];
 };
 
+// Usage:
+// ArrayOf2<double> d;
+// ArrayOf2<int> i;
+// i[0] = 1;
+// i[1] = 5;
+
 // Example 2: Template with non-type parameter
 // An Array class with a dynamic fixed-size array.
 template <typename T, size_t N>
@@ -38,11 +44,22 @@ private:
    T data_[N];
 };
 
+// Usage:
+// Array<int, 2> i;
+// i[0] = 1;
+// i[1] = 5;
+// Array<double, 4> i;
+
+
 // Example 3:
 // TEMPLATE VARIABLE
 template <typename T>
 constexpr T pi = T(3.14159265358979323846264338327950288419716939937510582097494459230781L);
 
+// Usage:
+// pi<float> ;      // 3.141592
+// pi<double>;      // 3.141592653589793
+// pi<int> ;        // 3
 
 // Example 4:   Template Template parameter.
 // The following function resequence() takes a container of one type e.g. std::vector
@@ -65,7 +82,10 @@ Out_container<T> resequence(const In_container<T>& in_container)
 }
 
 // Form 2: non-variadic
-// The following form works with std::vector, since std::vector isn't a container that receive one type template parameter; it's a container that receive two type template parameter (the second one with a default type: std::allocator<T> where T is the first one). So change above to more flexible container with an variadic list of template types of arguments
+// The following form works with std::vector, since std::vector isn't a container that receive one 
+// type template parameter; it's a container that receive two type template parameter 
+// (the second one with a default type: std::allocator<T> where T is the first one). 
+// So change above to more flexible container with an variadic list of template types of arguments.
 template <  template <typename...> class Out_container,
             template <typename...> class In_container,
             typename... T>
@@ -109,17 +129,22 @@ struct Factorial<0>
 template <typename T>   struct restrictor { };
 template<>              struct restrictor<float>    { typedef float result; };
 template<>              struct restrictor<double>   { typedef double result; };
+
 template <typename T>
-typename restrictor<T>::result distance(T x1, T y1, T x2, T y2)
+typename restrictor<T>::result 
+distance(T x1, T y1, T x2, T y2)
 {
     T tmp1 = x1 - x2;
     T tmp2 = y1 - y2;
     return std::sqrt( tmp1*tmp1 + tmp2*tmp2 );
 }
 
+//-----------------------------------------------------
+// Exmaple 7: CRTP
+//-----------------------------------------------------
 
 //-----------------------------------------------------
-// Exmaple 7: Fold expressions with Templates in C++14
+// Exmaple 8: Fold expressions with Templates in C++14
 //-----------------------------------------------------
 
 //// C++17 fold expression
@@ -141,8 +166,8 @@ auto sum(const T1& x1, const T& ... x) {
 }
 
 //-----------------------------------------------------
-// Example 8: 
-// A template which groups whatever datattypes are passed 
+// Example 9: 
+// A template which groups whatever datatypes are passed 
 // to it and then casts the value which is present
 //-----------------------------------------------------
 
@@ -229,7 +254,7 @@ int main(int argc, const char * argv[])
     std::cout << "\nThe distance between (0,0) & (2,2): "
               << distance(0.0,0.0,2.0,2.0) <<"\n";      // 2.82843
 
-    //  distance(0,0,2,2);  // ERROR:   int not allowed.
+    // distance(0,0,2,2);  // ERROR:   main.cpp:257:5: error: no matching function for call to 'distance'
 
     
    std::cout <<"\n-----------------------";
