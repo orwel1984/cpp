@@ -88,15 +88,17 @@ void doWork(){
 int main(){
     
     // step 1:  create a Thread
-    std::thread worker_thread(doWork);       // a thread is launched immediately
+    // a thread is launched/scheduled immediately on creation
+    std::thread worker_thread(doWork);
 
     // ....
     
     //  don't forget to: 
+    // Step 2:  
+    // Handle exceptions if the System is out of threads
 
-    // Step 2:  Handle exceptions if the System is out of threads
-
-    // Step 3:  call join() on all threads created by the program before program terminates
+    // Step 3:  
+    // call join() on all threads created by the program before program terminates
 
     //  description follows for above steps.
 }
