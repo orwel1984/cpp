@@ -1,2 +1,2 @@
-g++ main.cpp -o main -std=c++14
+g++ main.cpp -o main -std=c++17
 ./main

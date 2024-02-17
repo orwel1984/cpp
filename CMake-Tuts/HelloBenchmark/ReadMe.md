@@ -30,14 +30,15 @@ You always add your sources in the ***src*** folder and add all external librari
 
 To build and run the HelloBoost example, use the following commands:
 
+#### Generate Make Project ####
 ```
 cmake -S . -B build -DBENCHMARK_ENABLE_GTEST_TESTS=OFF -DCMAKE_BUILD_TYPE=Release 
 ```
-
+#### Build ####
 ```
 cmake --build build
 ```
-
+#### Run ####
 ```
 ./build/HelloBenchmark
 ```
