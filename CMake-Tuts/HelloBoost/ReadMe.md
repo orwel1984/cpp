@@ -1,5 +1,39 @@
 # Hello Boost 
 
+## Introduction
+
+Boost is mainly a Header-only library. 
+
+This means that you can include the headers directly into your code without having to seperately build the library. You just need to give the compiler path to the include directories where headers are stored.
+
+But Some parts of the library still needs to be built seperately and then linked to your program either statically or dynmaically. e.g. boost::filesystem, boost::program_options, boost::regex etc.  See the full list on the official docs page: [Official Boost Docs](https://www.boost.org/doc/libs/1_84_0/more/getting_started/unix-variants.html#header-only-libraries)
+
+## Problems Building Boost with CMake
+
+- **Support from CMake**
+
+  CMake officialy provides a utility for building Boost, called FindBoost, which is invoked indirectly by calling FIND_PACKAGE(Boost ... )
+  [FindBoost](https://cmake.org/cmake/help/latest/module/FindBoost.html)
+
+- **Support from Boost**
+  - The official release of Boost does'nt include support for building with CMake. 
+    See [Boost GitHub Page](https://github.com/boostorg/cmake?tab=readme-ov-file)
+ 
+  - The file and directory layout of Boost releases, for historical reasons, has all the Boost header files copied into a single *boost/* directory. These headers are then removed from the individual library *include/* directories. The CMake support infrastructure expects the headers to remain in their respective libs/<libname>/include directories, and therefore does not work on a release archive.
+
+#### Visualize Dependency Graph with Grpahviz
+
+Run the following command from project root
+```
+cmake --graphviz=HelloBoost.dot . 
+```
+
+Might be useful to add the following if you have some cutsom-targets:
+
+```
+set(GRAPHVIZ_CUSTOM_TARGETS TRUE)
+```
+
 There are two ways to use Boost library in your projects. 
 
 1. You can build the Boost sources alongside your project. 

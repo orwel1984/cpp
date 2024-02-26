@@ -1,6 +1,20 @@
 # Smart Pointers
 
-###  Raw Pointers  T*
+Table of Contents
+
+- [ Raw Pointers ](#raw-pointers-t) 
+- [Smart Pointers](#smart-pointers-1)
+    - [std::unique_ptr](#unique-pointer-stdunique_ptr)
+        - [Factory Method](#1-factory-method)
+        - [PIMPL](#2-pimpl-idiom)
+        - [Convert to shared_ptr](#3-conversion-to-shared-pointers)
+    - [std::shared_ptr](#shared-pointers-stdshared_ptr)
+        - [Control Block]
+        - [Control Block]
+    - [std::weak_ptr](#weak-pointers)
+
+<a name="raw"></a>
+### Raw Pointers:  T*
 
 A pointer is a type of variable that:
 
@@ -25,24 +39,34 @@ Some problems with Raw pointers:
 4.  Did you *delete* the pointer only once along every path of code?
 5.  Is the pointer dangling and already deleted?
 
-#  Smart Pointers
+<a name="smart"></a>
+## Smart Pointers
 
 These are just wrappers around raw pointers. <p>
 
-Syntax-wise, they behave exactly like raw pointers, but solve issues with the raw pointers discussed above.
+They are smart because they add additional functionalities to Raw pointers by adding some automatic operations like freeing pointer resources or by restricting some operations.
 
-They prohibit some actions on raw-pointers, while automate other actions.
+Their API must conform to the original syntax of the raw pointers.
+They must support * and -> operators just like raw pointers.
+
+- Exclusive vs Shared Ownership
 
 ##  Unique Pointer [std::unique_ptr]
 
-Addresses the problem of calling delete after new. <p>
+Bjourne Stroustrupp
+: "*Release of resources must be guaranteed and implicit*"
+
+**std::unique_ptr** guarantees that *delete* will be called for every *new*. It follows the principle of [RAII](./RAII.md). It does this by automatically calling delete when the pointer goes out of scope.<p> 
+
 It can be declared using any of the following forms:
 
 ```cpp
+#include <memory>
+
 // 1 - with a Raw pointer
 std::unique_ptr<T> pointer = std::unique_ptr<T>(new T);
 
-// 2 - with Arguments
+// 2 - with std::make_unique<>
 auto pointer = std::make_unique<T>(...);  // pass arguments if any
 
 // 3 - with Custom deleter
@@ -75,7 +99,16 @@ std::unique_ptr<T> b = std::move(a);    // a is now nullptr after move
 You may ask why?
 This is the only way to ensure that across all the call chains and pointer exchanges, deletion happens only once.
 
+#### Important Methods
+- release()
+- reset(...)
+
 #### Use Cases 
+
+We will discuss the following use-cases of the unique_ptr:
+1.  Factory Method
+2. Pimpl Idiom
+3. Cast to shared_ptr
 
 ##### 1. Factory Method
 A factory method usually: 
@@ -145,9 +178,11 @@ std::shared_ptr<T> sp = factoryMethod<T>(args);
 ```
 This is the key reason for why Factory Methods prefer returning a unique_ptr. The caller can decide wether to use <u>exclusive ownership semantics</u> for the returned object or <u>shared ownership semantics.</u> 
 
+
+<a name="shared"></a>
 ###  Shared Pointers [std::shared_ptr] 
 
-
+<a name="weak"></a>
 ###  Weak Pointers
 
 
