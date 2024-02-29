@@ -5,13 +5,11 @@ Table of Contents
 - [ Raw Pointers ](#raw-pointers-t) 
 - [Smart Pointers](#smart-pointers-1)
     - [std::unique_ptr](#unique-pointer-stdunique_ptr)
-        - [Factory Method](#1-factory-method)
-        - [PIMPL](#2-pimpl-idiom)
-        - [Convert to shared_ptr](#3-conversion-to-shared-pointers)
     - [std::shared_ptr](#shared-pointers-stdshared_ptr)
         - [Control Block]
         - [Control Block]
     - [std::weak_ptr](#weak-pointers)
+- [Specifying Intent with Smart-Pointer Paranaters]
 
 <a name="raw"></a>
 ### Raw Pointers:  T*
@@ -19,7 +17,7 @@ Table of Contents
 A pointer is a type of variable that:
 
 - Stores the **address** of an object in memory. 
-- *Lifetime*: It's lifetime isn't controlled by the encapsulating object.
+- __Lifetime__: It's lifetime isn't controlled by the encapsulating object. The pointer variable can go out of scope while the memory resource it is pointing to will still remain alive until explicilty cleaned up.
 - It can be assigned the address of another pointer or non-pointer variable, nullptr or contain some random data if unassigned.
 - *Owning-Pointers*: <p>
 When a program allocates an object on the *heap* in memory, it receives the address of that object in the form of a pointer. Such pointers are called *owning-pointers*. e.g. the call to **new** operator in C++ or **malloc** in C (which in turn calls the linux **brk()** and **sbrk()**  to increase the size of data-segment memory allotted to the process). 
@@ -39,150 +37,103 @@ Some problems with Raw pointers:
 4.  Did you *delete* the pointer only once along every path of code?
 5.  Is the pointer dangling and already deleted?
 
-<a name="smart"></a>
 ## Smart Pointers
 
-These are just wrappers around raw pointers. <p>
+These are just wrappers around old raw pointers. <p>
+- They add additional functionalities to raw pointers e.g. automatic resource cleanup, reference-couting etc. 
+- Restrict undesired operations .
+- Their API must conform to the original syntax of the raw pointers. 
 
-They are smart because they add additional functionalities to Raw pointers by adding some automatic operations like freeing pointer resources or by restricting some operations.
+    They must support * and -> operators just like raw pointers.
 
-Their API must conform to the original syntax of the raw pointers.
-They must support * and -> operators just like raw pointers.
+    They must also support increment ++ and decrements --
 
-- Exclusive vs Shared Ownership
+
+#### Exclusive vs Shared Ownership model
+Currently two approaches are common amongst smart-pointers handling of dynamic memory. 
+
+__Exclusive__ :
+Either a pointer can exclusively own the memory it points to i.e. no other pointer can even point to it. <u>Copying this pointer is not allowed</u> and it can <u>only be passed on to another pointer with std::move().</u> 
+
+__Shared__ :
+Or it can share the memory reference with other pointers 
 
 ##  Unique Pointer [std::unique_ptr]
 
-Bjourne Stroustrupp
-: "*Release of resources must be guaranteed and implicit*"
+See [document: unique_ptr.md](Unique_ptr.md)
 
-**std::unique_ptr** guarantees that *delete* will be called for every *new*. It follows the principle of [RAII](./RAII.md). It does this by automatically calling delete when the pointer goes out of scope.<p> 
-
-It can be declared using any of the following forms:
-
-```cpp
-#include <memory>
-
-// 1 - with a Raw pointer
-std::unique_ptr<T> pointer = std::unique_ptr<T>(new T);
-
-// 2 - with std::make_unique<>
-auto pointer = std::make_unique<T>(...);  // pass arguments if any
-
-// 3 - with Custom deleter
-auto deleter = [](T* raw){ // };
-std::unique_ptr<T, decltype(deleter)> pointer(nullptr, deleter); 
-
-```
-
--   Automatically calls delete when out of scope
--   **Exclusive ownership** of the object i.e. it won't allow copying the value, only moving. 
--   Same size as raw pointer
-
-#### Prohibitions:
-Copying one unique-pointer to another is now allowed.
-
-```cpp
-std::unique_ptr<T> a = std::unique_ptr<T>(new T);
-std::unique_ptr<T> b = nullptr;
-
-b = a;      // compiler-error
-```
-
-Moving from a source pointer to destination pointer transfers ownership and sets the source pointer to nullptr.
-
-```cpp
-std::unique_ptr<T> a = std::unique_ptr<T>(new T);
-std::unique_ptr<T> b = std::move(a);    // a is now nullptr after move 
-```
-
-You may ask why?
-This is the only way to ensure that across all the call chains and pointer exchanges, deletion happens only once.
-
-#### Important Methods
-- release()
-- reset(...)
-
-#### Use Cases 
-
-We will discuss the following use-cases of the unique_ptr:
-1.  Factory Method
-2. Pimpl Idiom
-3. Cast to shared_ptr
-
-##### 1. Factory Method
-A factory method usually: 
-1.  Creates an object on the heap and return the pointer to the caller. 
-2.  Excpects the caller to take ownership of the pointer and handle it's deletion.
-
-This is a perfect case for a unique_ptr. <p>
-However, there are some things to take care of, since a factory method usually involves polymorphism when creating objects.
-
-```cpp
-// consider the product heirarchy
-class Shape {
-    virtual ~Shape() = default;
-}
-
-class Circle : public Shape { }
-class Square : public Shape { }
-class Rectangle : public Shape { }
-
-// custom deleter - always take raw pointer to the base class
-auto deleter = [](Shape* rawPtr){ 
-                            //... do some logging etc.
-                            delete rawPtr;
-                    };
-
-template<typename... Ts>
-std::unique_ptr<Shape, decltype(deleter)>
-factoryMethod(Ts&&... params)
-{
-    std::unique_ptr<Shape, decltype(deleter)> pShape(nullptr, deleter);
-
-    if( /*should create a circle ( params)*/ )
-    {
-        pShape.reset( new Circle(std::forward<Ts>(params)));
-    }
-    else if( /*should create a Square ( params)*/ )
-    {
-        pShape.reset( new Square(std::forward<Ts>(params)));
-    }
-    else if( /*should create a Rectangle ( params)*/ )
-    {
-        pShape.reset( new Rectangle(std::forward<Ts>(params)));
-    }    
-
-    return pShape;
-}
-```
-
-**Note:**
--   custom deleter requires <u>a raw pointer to the Base class </u> and will call **delete** or **delete[ ]** on it. 
--   **reset** method is used to reset the internal raw-pointer of the unique_ptr with a call to **new**. 
-- intially the pShape pointer is initialized with nullptr
-- The base class Shape will require a virtual destructor for this pattern to work.
-- When using the custom deleter the size of the unique_ptr will depend on the size of the lambda. It can grow bigger than the raw-pointer depending upon how much state is being stored in the lambda.
-
-
-##### 2. Pimpl Idiom
-
-Pimpl Idiom implementation is another popular use-case of unique_ptr.
-
-##### 3. Conversion to Shared-Pointers
-
-Another attractive feature of unqiue_ptr is that it is convertible to a shared-pointer:
-
-```cpp
-std::shared_ptr<T> sp = factoryMethod<T>(args);
-```
-This is the key reason for why Factory Methods prefer returning a unique_ptr. The caller can decide wether to use <u>exclusive ownership semantics</u> for the returned object or <u>shared ownership semantics.</u> 
-
-
-<a name="shared"></a>
 ###  Shared Pointers [std::shared_ptr] 
 
-<a name="weak"></a>
 ###  Weak Pointers
 
 
+### Specifying Intent with smart-pointer parameters 
+
+Use smart pointers as paramters only to explicitly express lifetime semantics. [[R.30]](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r30-take-smart-pointers-as-parameters-only-to-explicitly-express-lifetime-semantics)
+
+Passing smart-pointers as paramaters transfers or shares ownership, and should only be used for this intent. [[F7]](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#f7-for-general-use-take-t-or-t-arguments-rather-than-smart-pointers)
+
+Let's discuss what intent is expressed by different smart pointer parameters:
+
+- **unique_ptr< T >**   <p>
+Express the intent that the function should take ownership of the pointer, or in other words your passing ownership of the object.
+
+```cpp
+void function(unique_ptr<widget>); // takes ownership of the widget
+
+// The only valid way to use this function will be with an std::move() or an r-value. Pass-by-value will give a compile error since the copy-constructor is deleted.
+
+// Valid uses:
+//1. 
+auto ptr = std::make_unique<Widget>();
+sink(std::move(ptr));
+//2.
+sink(std::make_unique<Widget>());
+sink(std::unique_ptr<Widget>(new Widget));
+
+// Error: Copy constructor is implicitly deleted ...
+auto ptr = std::make_unique<Widget>();
+sink(ptr); 
+```
+
+- **unique_ptr< T >&** <p>
+Express intent that the function **should reseat** the pointer. Reseat means “making a pointer refer to a different object”.  
+
+```cpp
+void function(unique_ptr<widget>& ptr) // "will" or "might" reseat pointer
+{
+    // change the value through the managed pointer
+    *(ptr->get()).widget_width = newWidth;
+
+    // reset the widget entirely
+    ptr.reset(new Widget());
+}
+```
+if the function does not call reset() or assigns a new value to the pointer, give a warning and suggest to use just T* or T& instead of unique_ptr<T>&
+
+- **const unique_ptr< T >&** <p>
+Never use this. Use T& reference or T* pointer instead.
+
+
+- **shared_ptr< T >**
+
+- **shared_ptr< T >&**
+- **const shared_ptr< T >&**
+
+
+```cpp
+void share(shared_ptr<widget>);            // share -- "will" retain refcount
+
+void reseat(shared_ptr<widget>&);          // "might" reseat ptr
+
+void may_share(const shared_ptr<widget>&); // "might" retain refcount
+```
+
+- __Rule #1__ <p>
+A function that does not alter owner-ship semantcis should use T* or T& 
+
+## Non-Owning pointer to arrays
+Use a std::span (C++20) or gsl::span
+
+## Const-Correctness <p>
+https://isocpp.org/wiki/faq/const-correctness 

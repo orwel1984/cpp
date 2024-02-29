@@ -11,8 +11,8 @@ LLVM's libc++ is a new implementation of the C++ standard library targeting C++1
 
 There are many Standard Library implementations: 
 
-- LLVM's        libc++
-- GNU’s         libstdc++
+- LLVM's        libc++        -- (default in Clang)
+- GNU’s         libstdc++    -- (default in GCC)
 - Apache’s    libstdcxx
 - STLPort 
 
