@@ -8,9 +8,12 @@ Helps reduce code duplication by minimizing the no. of function overloads you ha
 - [Concepts](#concepts)
 - [Policy Classes](#policy-classes)
 - [CRTP](#crtp)
-- [Type Traits](#typetraits)
+- [Type Traits](#type-traits)
 - [Tag Dispatching](#tagdispatch)
 - [SFINAE](#sfinae)
+    - [Point Class](#1-generic-point)
+- [Factorial](#factorial)
+       
 
 <a name="functors"></a>
 ## Functors
@@ -288,7 +291,7 @@ cout<<  is_int<float>::value ;          // prints 0
 cout<<  is_int<MyCustomType>::value;    // prints 0
 ```
 
-    So as you can see above that for any cutom-type I can use is_int::value
+So as you can see above that for any cutom-type I can use is_int<T>::value
 
 
 2.  **is_same**<T,T>
@@ -334,8 +337,308 @@ cout<<  is_int<MyCustomType>::value;    // prints 0
 ## SFINAE
 - substitution failure is not an error
 
+**std::enable_if<bool, class T = void>** : 
+Can be used to disable one method/constructor completly if the first template parameter condition is not true.
+
+e.g. sometimes we need the constructor to distinguish between integer and floating point types and not implicitly cast them.
+
+```cpp
+// Possible Implementation
+template<bool B, class T = void>
+struct enable_if {};
+ 
+ // true case specialized 
+template<class T>
+struct enable_if<true, T> { typedef T type; };
+```
+So the type only exists when condition is true. 
+If the compiler encounters the false case, it will discard generation of that function/class template.
+
+See also [docs](https://en.cppreference.com/w/cpp/types/enable_if).
+
+Example Usage:
+
+```cpp
+// Given some class value 
+class value;
+
+// constructor only enabled for float or double types
+template <typename T>
+value(T val, 
+    typename enable_if<
+                std::is_floating_point<T>::value, T
+            >::type* = 0) 
+    : base_type( double_t(val))
+){ }
+
+// constructor only enabled for int or enum types
+template <typename T>
+value(T val,     
+    typename enable_if<
+            boost::mpl::or_< 
+                std::is_integral<Integer>::value, 
+                is_enum<T> 
+            >, T>::type* = 0) 
+    : base_type( int_t(val))
+){ }
+```
+
+__NOTE:__ type* above means a pointer. It is passed as a second argument to the original constructor of the value() and this second argument is set to default zero (T* = 0)
+
+## Examples
+
+### 1. Generic Point 
+
+Imagine you have a 2D Point class defined in a library and you define a distance function using it.
+
+```cpp
+struct  myPoint
+{
+    double x;
+    double y;
+}
+
+double
+distance(mypoint const& a, mypoint const& b)
+{
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+
+    return std::sqrt(dx*dx + dy*dy);
+}
+```
+
+Now Imagine you integrate a second library or define another custom point like below:
+
+```cpp
+struct  yourPoint
+{
+    double x;
+    double y;
+}
+```
+So you update the distance function such that it can use either of the point-types or even mix them while calculating distances between them. 
+So you use templates to define a generic distance function that takes two point types:
+
+```cpp
+template <typename P1, typename P2>
+double
+distance(P1 const& a, P2 const& a)
+{
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+
+    return std::sqrt(dx*dx + dy*dy);
+}
+```
+
+The above assumed that the each of the point types satisfy the requirement that x,y coordinates can be accessed publically. 
+
+Now imagine the situation where a third point type is defined such that it's interface is incompatible with other points: 
+
+```cpp
+struct  secretPoint
+{
+    double get_x();
+    double get_y();
+private: 
+    double x,y;
+}
+```
+
+Now you want to update the distance function to also cater for secretPoint above.  Some startegy like below could address the problem:
+
+```cpp
+// update distance function such that it has a generic get<i>(T)
+template <typename P1, typename P2>
+double
+distance(P1 const& a, P2 const& a)
+{
+    double dx =  get<0>(a) - get<0>(b);
+    double dy =  get<1>(a) - get<1>(b);
+
+    return std::sqrt(dx*dx + dy*dy);
+}
+```
+So how do we go about implementing this get<> method? <p>
+We can use traists to specialize on each of the incompatible types (i.e. myPoint, SecretPoint etc.):
+
+```cpp
+namespace traits
+{
+    template <typename T, int D>
+    struct access { };
+}
+
+namespace traits
+{
+    // specialize myPoint 
+    
+    // index i = 0
+    template <>
+    struct access <myPoint, 0>
+    {
+        static double 
+        get( myPoint const& p)
+        {
+            return p.x;
+        } 
+    }
+
+    // Same for index i = 1
+
+    //----------------------
+    // specialize secretPoint 
+    
+    // index i = 0
+    template <>
+    struct access <secretPoint, 0>
+    {
+        static double 
+        get( secretPoint const& p)
+        {
+            return p.get_x();
+        } 
+    }
+
+    // Same for index i = 1
+}
+```
+
+This means that in the distance fucntion, the get<> method needs to be prefixed with **traits::access<T,i>**::get, like: 
+
+```cpp
+// update distance function such that it has a generic get<i>(T)
+template <typename P1, typename P2>
+double
+distance(P1 const& a, P2 const& a)
+{
+    double dx =  traits::access<P1,0>::get(a) - traits::access<P2,0>::get(b);
+    double dy =  traits::access<P1,1>::get(a) - traits::access<P2,1>::get(b);
+
+    return std::sqrt(dx*dx + dy*dy);
+}
+```
+This can be further improved, if we introduce a proxy function that does the prefixing for us. This way we can get our final inteded form for get():
+
+```cpp
+// add a proxy function to remove prefix.
+template <int D, typename P>
+inline double
+get(P const& a)
+{
+    return traits::access<P,D>::get(a);
+}
+```
+
+### 2. N-Dimensional Point
+If p,q are points in n-dimensional space, then the distance function as given by Pythagores :
+
+$ d(p,q) = \sqrt{ \sum_{i=1}^n (q_i - p_i)^2  } $
+
+To implement this we borrow the idea of template recursion (as used in the Factorial example). Let's call the term inside the square-root as pythogras and create a function to calculate it:
+
+```cpp
+// add a proxy function to remove prefix.
+template <typename P1, typename P2, int N>
+struct pythagoras
+{
+    static double 
+    apply(P1 const& a, P2 const& b)
+    {
+        double d = get<N-1>(a) - get<N-1>(b);
+        // recurse
+        return d*d + pythagoras<P1, P2, N-1>::apply(a,b);
+    }
+}
+
+// specialize for N=0
+template<typename P1, typename P2>
+struct pythagoras<P1, P2, 0>
+{
+    static double 
+    apply(P1 const& a, P2 const& b)
+    {
+        return 0;
+    }
+}
+```
+
+So the distance function should then look like:
+
+```cpp
+template<typename P1, typename P2>
+double 
+distance(P1 const& a, P2 const& b)
+{
+    // check that two point types have the same dimension.
+    static_assert(dimension<P1>::value == dimension<P2>::value);
+
+    constexpr int N = dimension<P1>::value;
+    return std::sqrt(  pythagoras<P1, P2, N>::apply(a,b) );
+}
+```
+
+Where dimension is just a type-trait of point type, implemented as follows:
+
+```cpp
+
+// step 1: define an empty struct, with no property for generic types
+namespace traits
+{
+    template<typename P>
+    struct dimension { }
+}
+
+// step 2: specialize ( for myPoint )
+
+namespace traits
+{
+    template<>
+    struct dimension<myPoint>
+    { 
+        static const int value = 2;
+    };
+
+// OR, using boost
+
+    template<>
+    struct dimension<myPoint> : boost::mpl::int_<2>
+    {  };
+
+}
 
 
 
-std::enable_if
+```
 
+
+## Factorial
+
+```cpp
+template <int N> 
+struct Factorial
+{
+    static int const value = N * Factorial<N-1>::value;
+};
+
+template <>
+struct Factorial<0>
+{
+    static int const value = 1;
+};
+
+// usage
+Factorial<12>::value; 
+
+// Note: This method only works for integer <= 12.
+// Higher value than that gives an integer overflow error.
+```
+
+
+## Final Note: 
+
+**Note** that in practise in metaprogramming we use three types of things:
+1. value
+2. types
+3. apply

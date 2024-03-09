@@ -70,7 +70,7 @@ The main goal of unique_ptr is to release resource only once along the entire co
 
 - __reset( T* newPtr)__ : replaces the internal pointer with the newPtr and calls __delete__ on the old managed pointer. 
 
-```cpp
+    ```cpp
     std::unique_ptr<T> a = std::unique_ptr<T>(new T);
     auto ptr = std::make_unique<int>(100);
 
@@ -85,14 +85,14 @@ The main goal of unique_ptr is to release resource only once along the entire co
 
     // 3. reset(....)
     ptr.reset(new int{3});   // will call delete on old pointer
-```
+    ```
 
 - **release()**:  This causes the unique_ptr to release ownership of the managed object and return the pointer. From this point onwwards, the call to get() will return nullptr. It is now the responisibility of the caller to take ownership of the returned pointer and call delete on it (e.g. by using get_deleter() ). 
-```cpp
+    ```cpp
     std::unique_ptr<T> ptr(new T());
     legacy_api(ptr.release());
     assert(ptr == nullptr);
-```
+    ```
 
 ## Use Cases 
 
@@ -162,7 +162,7 @@ Pimpl Idiom implementation is another popular use-case of unique_ptr.
 
 ### 3. Custom RAII class 
 
-
+std::unique_ptr can be used to create any kind of custom RAII class  to mange other non-pointer resources like files, mutex-locks, etc.
 
 ### 4. Conversion to Shared-Pointers
 
