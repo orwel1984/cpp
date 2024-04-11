@@ -79,7 +79,7 @@ Let's discuss what intent is expressed by different smart pointer parameters:
 Express the intent that the function should take ownership of the pointer, or in other words your passing ownership of the object.
 
 ```cpp
-void function(unique_ptr<widget>); // takes ownership of the widget
+void sink(unique_ptr<widget>); // takes ownership of the widget
 
 // The only valid way to use this function will be with an std::move() or an r-value. Pass-by-value will give a compile error since the copy-constructor is deleted.
 

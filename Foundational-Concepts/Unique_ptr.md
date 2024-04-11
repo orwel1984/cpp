@@ -18,6 +18,9 @@
 Bjourne Stroustrupp
 : "*Release of resources must be guaranteed and implicit*"
 
+**std::unique_ptr** guarantees that *delete* will be called for every *new*. <p> 
+It uses [RAII](./RAII.md) pattern and the deleter is called automatically, when the pointer goes out of scope. This property of unique_ptr makes it ideal to implement general RAII using custom deleters for resources other than memory.
+
 -   Automatically calls delete when out of scope.
 -   **Exclusive ownership** 
 -   Same size as raw pointer
@@ -29,7 +32,7 @@ It can be declared using any of the following forms:
 
 {
     // 1 - with a Raw pointer
-    std::unique_ptr<T> pointer = std::unique_ptr<T>(new T);
+    std::unique_ptr<T> pointer(new T);
 
     // 2 - with std::make_unique<>
     auto pointer = std::make_unique<T>(...);  // pass arguments if any
@@ -41,12 +44,9 @@ It can be declared using any of the following forms:
 } // memory freed
 ```
 
-**std::unique_ptr** guarantees that *delete* will be called for every *new*. <p> 
-It uses [RAII](./RAII.md) pattern and so the deleter is called automatically when the pointer goes out of scope. This property of unique_ptr makes it ideal to implement general RAII using custom deleters for resources other than memory.
-
 ### Prohibitions
 
-- **Copying**  to another is unique_ptr is not allowed.
+- **Copying**  to another unique_ptr is not allowed.
 
     ```cpp
     std::unique_ptr<T> a = std::unique_ptr<T>(new T);
@@ -55,11 +55,13 @@ It uses [RAII](./RAII.md) pattern and so the deleter is called automatically whe
     b = a;      // compiler-error
     ```
 
-- **Moving** from another pointer is allowed, but transfers ownership, sets the source pointer to nullptr.
+- **Moving** from another pointer is allowed. This transfers ownership and sets the source pointer to nullptr.
 
     ```cpp
     std::unique_ptr<T> a = std::unique_ptr<T>(new T);
-    std::unique_ptr<T> b = std::move(a);    // a = nullptr 
+    std::unique_ptr<T> b = std::move(a);    
+    
+    // a = nullptr 
     ```
 
 You may ask why?
@@ -99,7 +101,8 @@ The main goal of unique_ptr is to release resource only once along the entire co
 We will discuss the following use-cases of the unique_ptr:
 1.  Factory Method
 2. Pimpl Idiom
-3. Cast to shared_ptr
+3. Custom RAII class
+4. Cast to shared_ptr
 
 ### 1. Factory Method
 A factory method usually: 
@@ -163,6 +166,26 @@ Pimpl Idiom implementation is another popular use-case of unique_ptr.
 ### 3. Custom RAII class 
 
 std::unique_ptr can be used to create any kind of custom RAII class  to mange other non-pointer resources like files, mutex-locks, etc.
+
+Just acquire the resource in the constructor and provide a custom deleter to the unique_pointer. 
+
+```cpp
+class Resource{
+
+    // constructor
+    Resource() 
+    {
+        //  acquire resource here
+    }
+
+    ~Resource
+    {
+        delete 
+    }
+
+
+}
+```
 
 ### 4. Conversion to Shared-Pointers
 
