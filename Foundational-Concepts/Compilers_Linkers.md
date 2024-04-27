@@ -21,21 +21,7 @@ Stage 4, linking, combines all the object files (those newly compiled, and those
 
 ![](Diagrams/image.png)
 
-GCC chooses to perform one or more of the steps above based on the compiler options you provide. 
-
-For any given input file, the file name suffix determines what kind of compilation is done. By default, GCC choose to do all of the above operations in a single step on a .cpp file. So if you just do: 
-
-```cpp
-// Single step
-gcc main.cpp
-
-// Multi Step
-// Step 1: Tell GCC to just compile, but not link it yet.
-gcc -c main.cpp
-// Step 2: Now link all objects file.
-gcc -o main main.o
-```
-The first command  will do everything and create an executable output *"a.out"* file.
+GCC choose to perform one or more of the steps above based on the compiler options provided. 
 
 #### Step 1:  Pre-Processing
 
@@ -102,6 +88,33 @@ During this step, the Linker pulls together identically named sections from diff
 The second thing that the linker does is that it reorders the sections so that sections with similar runtime needs are adjacent on disk.
 
 In the final stage, Loader takes these adjacent chunks called segments, and maps them to memroy on page aligned boundaries. After this mapping the Laoder adjusts the page permissions accordingly, e.g. the .text segments require a R/X read-execute permission, and the data segments require read-write permissions.
+
+#### Compile & Link Multiple Files into an Executable 
+
+To compile a single .cpp file and convert it into an object .o file, use the -c option. The object files can then be linked into the final executable with a -o option.
+
+```cpp
+// only compile, .cpp files to .o
+gcc -c main.cpp
+gcc -c message.cpp
+
+//  link all objects files into a binary
+gcc -o main \
+        main.o \
+        message.o \
+        -lstdc++
+```
+-lstdc++ command tells the linker to also statically link with libc++. 
+
+#### Compile & Link Multiple into Libraries 
+
+To compile the .cpp file to become part of a .so Shared Librray file, use the **-fPIC** flag, for position independent code, when compiling.
+
+```bash
+# use -fPIC  if code becomes part of a .so file
+gcc -c myLibraryImpl.cpp -fPIC
+```
+
 
 
 ```bash

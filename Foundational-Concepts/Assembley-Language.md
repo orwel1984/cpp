@@ -1,4 +1,4 @@
-# Assembley
+# Assembly
 
 A program is just a list of assembley instructions. 
 
@@ -18,6 +18,7 @@ main:
         push    rbp
         mov     rbp, rsp
 
+        # return value
         mov     eax, 1
 
         # epilogue
@@ -25,7 +26,13 @@ main:
         ret
 ```
 
-The first two lines and last two lines are just the function pre-requisite and post. The rerturn value is being passed into **EAX** register. 
+- Prolog:  When the function starts, the first thing to do is point the RBP (Base-Pointer) to the top of the stack. 
+
+- Epilog: 
+Pop the old value of the RBP.  Call the return instruction RET. 
+
+- Return Value:
+The rerturn value is passed through **EAX**. 
 
 In the Intel Assembley format the first operand is DESTINATION.
 
@@ -52,23 +59,28 @@ int func(){return 1;}
 int main(){return func();}
 ```
 
-Then let'c compile and print debug symbols and text-sections:
+Then let'c compile and print debug symbols:
 
 ```bash
 gcc -c a.cpp
 nm --debug-syms --demangle   a.out
-objdump --no-show-raw-insn -dC a.o
 ```
 
 ```cpp
 // # Symbol-Table
-
 0000000000000000 T func()
 0000000000000008 T _main
 0000000000000000 t ltmp0
 0000000000000028 s ltmp1
+```
+Note the capital T before func() and main().
 
+And let's print the text-section.
+```cpp
+objdump --no-show-raw-insn -dC a.o
+```
 
+```cpp
 // Text Section
 
 (__TEXT,__text) section
@@ -87,5 +99,5 @@ _main:
 0000000000000024	ret
 ```
 
-As you can see there are two symbols func( ) and main( ) in the text sections now. The assembley is generated for the ARM platform this time.
+The assembley is generated for the ARM platform where the program was compiled for.
 

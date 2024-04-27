@@ -13,9 +13,13 @@ Helps reduce code duplication by minimizing the no. of function overloads you ha
 - [SFINAE](#sfinae)
     - [Point Class](#1-generic-point)
 - [Factorial](#factorial)
-       
 
-<a name="functors"></a>
+
+References:
+1. https://www.youtube.com/watch?v=urshrBatNo4 
+2. 
+
+
 ## Functors
 An object or class which is callable like a function. 
 - It is like a function-ptr but which has a state.
