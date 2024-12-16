@@ -8,8 +8,15 @@
 3. [std::thread](#stdthread)
     * [Joinable State](#joinable-state)
     * [Unjoinable State](#unjoinable-state)
-
-
+4. [Synchronization Primitives]
+5.  Non-Blocking Programming
+    * [Lock Free Programming ]
+    * [Wait Free Programming ]
+6. [std::Atomics ]
+7. std::Promise / std::Future
+8. Examples
+    * [Producer/Consumer ]
+    
 
 ## **Process**
 A Process is **an abstraction of a running program**.
@@ -152,9 +159,35 @@ Parallel execution policies starts all the threads at the beginning of each para
 - To complicate matters even more, each version of the compiler requires the corresponding version of TBB: neither an older nor a more recent version will work (the failures can manifest themselves at both compile and link-time). To run the programs linked with TBB, you will likely need to add the TBB libraries to your library path.
 
 
+## Atomics
 
-    -----------------------
-    Callbacks
-    -----------------------
-    A callback function is a function passed into another function as an argument.
-    The callback is then invoked later to signal completion of some kind of routine or action.
+- Defintion: 
+An atomic operation is something which is guaranteed to execute as a single operation. Other threads can either see the state of the System before the operation or after it has finished, but cannot see any intermediate state.
+
+- On the very low-level, atomic operations are special hardware instruction, where hardware guarantees atomicity.
+
+### std::atomic
+
+- increment <p>
+Increment is the most basic operation. But it consists of three operations in one: 
+ - - Read 
+- -  Modify 
+- -  Write
+
+
+
+-----------------------
+Callbacks
+-----------------------
+A callback function is a function passed into another function as an argument. The callback is then invoked later to signal completion of some kind of routine or action.
+
+ # std::Promise / std::Future
+
+The promise/future mechanism provides a way for two different threads to communicate result of an operation with each other.
+
+ ##  std::Future \<T>
+The class template `std::future` provides a way to access the result of an asynchronous-operation.  Usually one thread creates another thread and launches it asynchronously. The creator of the asynchronous-operation can then use a returned  `std::future` object to query, wait for, or extract a value from it. 
+
+When the asynchronous operation is ready to send a result to the creator, it can do so by modifying `shared state` linked to the std::future.
+
+ ##  std::Promise \<T>

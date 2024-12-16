@@ -13,7 +13,7 @@ T square(T len){
    return len*len;
 }
 
-// a function that takes function-ptr as argument
+// a function that takes square(T) function-ptr as argument
 template <typename T>
 T cube1( T (*square)(T), T len )
 {

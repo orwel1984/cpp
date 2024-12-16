@@ -2,7 +2,13 @@
 
 
 ## Artifcat 
-In software development, a software artifact is an item that is produced during the development process.  It can be an executable, library, test-suite,  etc.  The list of artifacts needed  gives a roadmap for the software to be produced.
+In software development, a software artifact is an item that is produced during the development process.
+<p>It can be:
+-   an executable 
+- a library
+- a test-suite etc..  
+
+The list of artifacts needed  gives a roadmap for the software to be produced.
 
 ## Targets 
 

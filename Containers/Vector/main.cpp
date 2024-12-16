@@ -7,10 +7,12 @@
     This allows us to resize the array dynamically -- compared to std::array where the size of the array is fixed. 
     (as std::array is simply a wrapper around normal C-style array [] on "Stack")
 
-    The std::vector::size():        gives the total elements contained in the vector.    
+    The std::vector::size():        Gives the total elements actually contained in the vector.    
     
-    The std::vector::capacity():    represents the total number of elements that the vector currently 
-                                    can hold, before it needs to reallocate the array on heap.
+    The std::vector::capacity():    Represents the total number of elements that the vector currently 
+                                                    can hold, before it needs to reallocate the array on heap. 
+                                                    This can be different from vector::size() e.g. I might have allocated space for 
+                                                    10 elements on the vector but have only inserted 2 elements in the vector.
 
     Thus std::vector provides a resizeable contiguous array.
     
@@ -97,8 +99,6 @@ int main(){
     std::cout   << "\n\nUnsafe-value: " 
                 <<  point.x << '\n';
 
-
-
     /*
     push_back vs emplace_back    
     -------------------------
@@ -128,10 +128,15 @@ int main(){
     struct S{
         // a simple class which does'nt have any "move-able data".
 
-        S():x(0),y(0)   {std::cout<<"\nS(0,0)";}
-        S(S const & s)     {std::cout<<"\nS(const S&)"; x = s.x; y=s.y;}    // copy-const
-        S(S && s)          {std::cout<<"\nS(S&&)"; x = s.x; y=s.y; } // move-const   
-        ~S()            {std::cout<<"\n~S()";}           // destructor
+        // members
+        int x;
+        int y;
+
+        // Constructors & Destructors
+        S():x(0),y(0)         {std::cout<<"\nS(0,0)";}                                     // user-defined const.
+        S(S const & s)      {std::cout<<"\nS(const S&)"; x = s.x; y=s.y;}    // copy-const.
+        S(S && s)              {std::cout<<"\nS(S&&)"; x = s.x; y=s.y; }           // move-const.
+        ~S()                       {std::cout<<"\n~S()";}                                        // destructor
         
         S& operator=(const S& other)  {std::cout<<"\nOperator="; return *this;}
         S& operator=(S&& other)       {std::cout<<"\nOperator="; return *this;}
@@ -139,10 +144,6 @@ int main(){
         // additional custom constructors with parameters
         S(int x):x(x),y(0) {std::cout<<"\nS(x)";}
         S(int x, int y):x(x),y(y)    {std::cout<<"\nS(x,y)";}
-
-        // members
-        int x;
-        int y;
     };
 
 

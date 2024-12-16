@@ -74,7 +74,7 @@ gcc -S -O0 main.cpp -Wa,-adhln=main.s -g -fverbose-asm -masm=intel
 <br>
 
 #### Step 3: Assembling
-Assembling is the process of translating the generated assembley instructions files to target machine code files, called object files.
+Assembling is the process of translating the generated assembley instructions files to **target machine code** files, called object files.
 
 Two main steps:<br>
 – Find memory address for symbols (e.g. functions).<br>
@@ -160,17 +160,13 @@ The ELF file defines a number of sections in an executable program. Important se
 
 
 # References:
-1.
-https://gcc.gnu.org/onlinedocs/gcc-3.1.1/gcc/Overall-Options.html#Overall%20Options
+1.  https://gcc.gnu.org/onlinedocs/gcc-3.1.1/gcc/Overall-Options.html#Overall%20Options
 
-2. 
-What Happens After The Compiler in C++ (How Linking Works) - Anders Schau Knatten - C++ on Sea 2023
+2.  What Happens After The Compiler in C++ (How Linking Works) - Anders Schau Knatten - C++ on Sea 2023
 https://www.youtube.com/watch?v=h4s891KVN80 
 
-3.
-CppCon 2018: Matt Godbolt “The Bits Between the Bits: How We Get to main()”
+3. CppCon 2018: Matt Godbolt “The Bits Between the Bits: How We Get to main()”
 https://www.youtube.com/watch?v=dOfucXtyEsU 
  
-4.
-Linkers, Loaders and Shared Libraries in Windows, Linux, and C++ - Ofek Shilon
+4. Linkers, Loaders and Shared Libraries in Windows, Linux, and C++ - Ofek Shilon
 https://www.youtube.com/watch?v=_enXuIxuNV4 

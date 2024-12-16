@@ -158,7 +158,7 @@ int main() {
 
     Base* base = new Child();           
     delete base;                //  Runtime Error:  Undefined behaviour if ~Base() is not virtual.
-                                //                  It will not call ~Child() since base is of Base* type.
+                                         //                  It will not call ~Child() since base is of Base* type.
 
     /*
     ***********************************************

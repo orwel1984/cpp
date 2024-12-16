@@ -7,7 +7,7 @@ gdb path/to/binary
 ``` 
 
 Make sure to compile your program with -g option. 
-Also set the optimization level to -Os to get proper assembley stadktraces all the way into libc.
+Also set the optimization level to -Os to get proper assembley stacktraces all the way into libc.
 
 ## Common Commands
 
@@ -58,8 +58,7 @@ Step over a single assembley instruction
 
 - tui enable
 
-
-- set data read/write breakpoints
+Set data read/write breakpoints
 
 ```
 watch <variable-name>
