@@ -664,10 +664,10 @@ void HelloTriangleApplication::cleanup()
     {
         DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
     }
-
     vkDestroySurfaceKHR(instance, m_surface, nullptr);
+    vkDestroyInstance(instance, nullptr);
 
-    vkDestroyInstance(instance, nullptr);    
+    // cleanup GLFW
     glfwDestroyWindow(m_window);
     glfwTerminate();
 }

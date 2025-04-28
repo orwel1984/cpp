@@ -78,8 +78,7 @@ Some design choices that must be considered when implementing your own RAII clas
 - Copyable?
 - Moveable?
 - Default Constructor
-- 
 
+## Rule of Zero
 
-
-
+The rule of zero states that if your class has member variables that are just based on std::* RAII based containers (std::vector,  std::unique_ptr, etc.. ), then you should let the compiler generate all special functions for you (No need to explicitily decalre any custom constructor/destoructors/copy/move-assignments).

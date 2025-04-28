@@ -1,5 +1,96 @@
 # Assembly
 
+### Table of Contents
+
+- [ Basic Empty Program ](#basic-empty-program) 
+- [ HelloWorld ](#hello-world) 
+
+## VERY VERY BASICS of Assembley
+Just to get started, keep in mind that processor only knows how to do very simple operations. For it C++ is very high-level and it's going to break down every single C++ operation into a bunch of smaller operations. It's going to do all that using mainly just **move**, **compare** & **jumps**. 
+
+It's mainly just moving data between registers and memory: 
+-   Registers to Register 
+-   Registers to Memory 
+-   Memory to Register
+-   Memory to Memory
+
+**Note:**  While moving to a register requires the name of the register, but for moving to memory you will need the **"Address"** in the memory (since memory does'nt have a name like register). Stack Operations are special memory operations which are assoicated with the name of the stack-pointer register RSP/ESP. 
+
+Then it will perform some operation and compare the resutls. 
+After the comparison it will jump to different locations in the .text section. 
+
+
+## Basic Empty Program
+
+```
+#Basic.asm  32-bit
+
+.global _start
+.intel_syntax
+
+#----------------------------#
+# DATA SECTION
+#----------------------------#
+.section .data
+
+#----------------------------#
+# TEXT SECTION
+#----------------------------#
+.section .text
+    
+_start:
+
+    # EXIT - Syscall()
+    mov %EAX, 1
+    mov %EBX, 65
+    int 0x80
+```
+
+To compile and link, use instructions below:
+
+```
+    as -o Basic.o --32 Basic.asm    
+
+    gcc -o Basic.elf -m32 -nostdlib Basic.o 
+
+    ./Baic.elf
+```
+
+
+```
+#Basic.asm  64-bit
+
+.global _start
+.intel_syntax
+
+#----------------------------#
+# DATA SECTION
+#----------------------------#
+.section .data
+
+#----------------------------#
+# TEXT SECTION
+#----------------------------#
+.section .text
+    
+_start:
+
+    # EXIT - Syscall()
+    mov %RAX, 0x3C
+    mov %RDI, 0                    #ERROR-CODE
+    syscall
+
+```
+
+
+
+
+## Hello World
+
+```
+```
+
+
 A program is just a list of assembley instructions. 
 
 This simple .cpp program which just returns 1, generates the following assembley (using GodBolt):
