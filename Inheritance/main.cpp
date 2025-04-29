@@ -48,8 +48,7 @@ Private Inheritance −           class Child : private Base {}
   based on the actual type of the object in memory. 
   This is called “dynamic binding.”
   - e.g. Base * b = new Child()
-        - any call to a virtual method 
-        - b.func() will be mapped to "Child::func()" at "run-time".
+        - any call to a virtual method b.func() will be mapped to "Child::func()" at "run-time".
  
 - V-pointer:
   If a class has one or more virtual functions, the compiler puts a hidden pointer as a member-variable

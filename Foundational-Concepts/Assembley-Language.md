@@ -2,25 +2,26 @@
 
 ### Table of Contents
 
-- [ Basic Empty Program ](#basic-empty-program) 
-- [ HelloWorld ](#hello-world) 
+* [ Basic Empty Program - 32 bit](#basic-empty-program-32-bit) 
+* [ Basic Empty Program - 64 bit](#basic-empty-program-32-bit) 
+* [ HelloWorld ](#hello-world) 
 
 ## VERY VERY BASICS of Assembley
+
 Just to get started, keep in mind that processor only knows how to do very simple operations. For it C++ is very high-level and it's going to break down every single C++ operation into a bunch of smaller operations. It's going to do all that using mainly just **move**, **compare** & **jumps**. 
 
 It's mainly just moving data between registers and memory: 
--   Registers to Register 
--   Registers to Memory 
--   Memory to Register
--   Memory to Memory
+*   Registers to Register 
+*   Registers to Memory 
+*   Memory to Register
+*   Memory to Memory
 
-**Note:**  While moving to a register requires the name of the register, but for moving to memory you will need the **"Address"** in the memory (since memory does'nt have a name like register). Stack Operations are special memory operations which are assoicated with the name of the stack-pointer register RSP/ESP. 
+**Note:**  While moving to a register requires the name of the register, but for moving to memory you will need the  **"Address"**  in the memory (since memory does'nt have a name like register). Stack Operations are special memory operations which are assoicated with the name of the stack-pointer register RSP/ESP. 
 
 Then it will perform some operation and compare the resutls. 
 After the comparison it will jump to different locations in the .text section. 
 
-
-## Basic Empty Program
+## Basic Empty Program (32-bit)
 
 ```
 #Basic.asm  32-bit
@@ -56,6 +57,7 @@ To compile and link, use instructions below:
 
 And for the 64-bit version use
 
+## Basic Empty Program (64-bit)
 ```
 #Basic.asm  64-bit
 
@@ -103,8 +105,7 @@ The binaries can be analysed with:
 ```
 ```
 
-
-A program is just a list of assembley instructions. 
+## A simple C - program
 
 This simple .cpp program which just returns 1, generates the following assembley (using GodBolt):
 
@@ -130,16 +131,15 @@ main:
         ret
 ```
 
-- Prolog:  When the function starts, the first thing to do is point the RBP (Base-Pointer) to the top of the stack. 
+* Prolog:  When the function starts, the first thing to do is point the RBP (Base-Pointer) to the top of the stack. 
 
-- Epilog: 
+* Epilog: 
 Pop the old value of the RBP.  Call the return instruction RET. 
 
-- Return Value:
+* Return Value:
 The rerturn value is passed through **EAX**. 
 
 In the Intel Assembley format the first operand is DESTINATION.
-
 
 ```bash
 otool -x -v a.out
@@ -177,9 +177,11 @@ nm --debug-syms --demangle   a.out
 0000000000000000 t ltmp0
 0000000000000028 s ltmp1
 ```
+
 Note the capital T before func() and main().
 
 And let's print the text-section.
+
 ```cpp
 objdump --no-show-raw-insn -dC a.o
 ```
@@ -204,4 +206,3 @@ _main:
 ```
 
 The assembley is generated for the ARM platform where the program was compiled for.
-

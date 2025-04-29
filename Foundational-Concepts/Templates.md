@@ -72,7 +72,7 @@ Here is a concept for **ForwardIterator**  and **BiDirectionalIterator** types:
 |     Can be decremented     	    |                      	|     --a<br>a--<br>*a--     	|
 
 
-As you can see that BiDirectional iterator type support a similar requirements to BiDirectional iterator except that it can be additionally decermented.
+As you can see that BiDirectional iterator type support a similar requirements to ForwardIterator except that it can be additionally decermented.
 
 ## Policy Classes
 
@@ -92,7 +92,7 @@ namespace std{
 // here Alloc is a policy and can change memory allocation behaviour of the string at compile time.
 ```
 
-Another example is a policy class can be a pointer-wrapper class that checks for a pointer being nullptr or not:
+Another example of a policy class can be a pointer-wrapper class that checks for a pointer being nullptr or not:
 
 ```cpp
 // Here is a simple pointer_wrapper class that takes any pointer of any kind and wraps it with different behaviours based on the policy chosen.

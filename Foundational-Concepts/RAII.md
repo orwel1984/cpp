@@ -35,7 +35,7 @@ Following table shows a list of common resources in C++, along with their acquir
 - Double dispose
 
 ## Object's Lifetime
-C++ objects have a well defined beginning and end. These points in object's lifecycle have code that can be automatically executed by the language: Constructors & Destructors
+C++ **Objects** have a well defined beginning and end. These points in object's lifecycle have code that can be automatically executed by the language: Constructors & Destructors
 
 
 ## So What is RAII

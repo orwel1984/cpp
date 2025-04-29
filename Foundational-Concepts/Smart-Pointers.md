@@ -6,8 +6,6 @@ Table of Contents
 - [Smart Pointers](#smart-pointers-1)
     - [std::unique_ptr](#unique-pointer-stdunique_ptr)
     - [std::shared_ptr](#shared-pointers-stdshared_ptr)
-        - [Control Block]
-        - [Control Block]
     - [std::weak_ptr](#weak-pointers)
 - [Specifying Intent with Smart-Pointer Paranaters]
 
@@ -56,15 +54,11 @@ __Exclusive__ :
 Either a pointer can exclusively own the memory it points to i.e. no other pointer can even point to it. <u>Copying this pointer is not allowed</u> and it can <u>only be passed on to another pointer with std::move().</u> 
 
 __Shared__ :
-Or it can share the memory reference with other pointers 
+Or it can share the memory reference with other pointers as well as owenership. Any pointer sharing the resource can the responisbility of deleting the resrouce.
 
-##  Unique Pointer [std::unique_ptr]
-
-See [document: unique_ptr.md](Unique_ptr.md)
-
-###  Shared Pointers [std::shared_ptr] 
-
-###  Weak Pointers
+##  Unique Pointer [std::unique_ptr](Unique_ptr.md)
+##  Shared Pointers [std::shared_ptr](Shared_ptr.md)
+##  Weak Pointers  [std::weak_ptr](Weak_ptr.md)
 
 
 ### Specifying Intent with smart-pointer parameters 
@@ -76,7 +70,7 @@ Passing smart-pointers as paramaters transfers or shares ownership, and should o
 Let's discuss what intent is expressed by different smart pointer parameters:
 
 - **unique_ptr< T >**   <p>
-Express the intent that the function should take ownership of the pointer, or in other words your passing ownership of the object.
+Express the intent that the function will take ownership of the pointer, or in other words your passing ownership of the object.
 
 ```cpp
 void sink(unique_ptr<widget>); // takes ownership of the widget

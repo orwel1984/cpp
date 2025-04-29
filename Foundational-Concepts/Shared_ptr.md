@@ -14,7 +14,7 @@ When std::shared_ptr goes out of scope, it checks the reference-count (i.e. the 
 ### Cost of Reference Counting
 
 -   Reference count memory <u>must be dynamically</u> created.
-- Incrementing/decrementing a reference count must be atomic.
+- <mark>Incrementing/decrementing a reference count must be atomic.</mark>
 - There is also a virtual function involved, which is used to ensure that the pointed-to-object is properly destroyed. Hence, the cost includes the machinery for virtual functions.
 
 - works best when default deleter, default allocator with std::make_shared is used. In this case the 

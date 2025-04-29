@@ -2,9 +2,9 @@
 
 ## What is a String
 
-A string is a sequence (or array) of **characters**.
+A string is an <mark>array of characters</mark>.
 
-Each character is represented as 1-byte. 
+Each character is represented as 1-byte (8 bits). 
 Each byte **encodes** one character of some **character-set**. 
 
 A string has an inherent hidden problem of keeping track of it's **length**. This can be done with either by storing it's length in a sperate byte or terminating the string with zero/null character '\0'
