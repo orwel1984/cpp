@@ -50,12 +50,11 @@ To compile and link, use instructions below:
 
 ```
     as -o Basic.o --32 Basic.asm    
-
     gcc -o Basic.elf -m32 -nostdlib Basic.o 
-
     ./Baic.elf
 ```
 
+And for the 64-bit version use
 
 ```
 #Basic.asm  64-bit
@@ -82,8 +81,22 @@ _start:
 
 ```
 
+Use the following commands to compile & Link 
+the 64-bit version
 
+```
+as Basic64.asm -o Basic.o
+gcc Basic.o -no-pie -nostdlib -o Basic.elf
+./Basic.elf
+```
 
+The binaries can be analysed with:
+
+```
+    readelf --all Basic.elf 
+    
+
+```
 
 ## Hello World
 

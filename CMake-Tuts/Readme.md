@@ -27,6 +27,6 @@ The main commands used in CMake to build/define targets are:
 Only the last command, for custom targets, does'nt necessarily produce any tangible artifacts.
 
 #### target_link_libraries()
-We connect our library targets, created with **add_library()**, to the executable targets  creatred with **add_executable()**, using the **target_link_libraries()**
+We connect our library targets, created with **add_library()**, to the executable targets  created with **add_executable()**, using the **target_link_libraries()**
 
 #### add_dependencies() 
