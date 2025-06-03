@@ -1,0 +1,11 @@
+../Core/Src/LCD.c:23:19:Lcd_create	56	static
+../Core/Src/LCD.c:49:6:Lcd_init	16	static
+../Core/Src/LCD.c:69:6:Lcd_int	32	static
+../Core/Src/LCD.c:80:6:Lcd_double	56	static
+../Core/Src/LCD.c:95:6:Lcd_string	32	static
+../Core/Src/LCD.c:106:6:Lcd_cursor	16	static
+../Core/Src/LCD.c:120:6:Lcd_clear	16	static
+../Core/Src/LCD.c:124:6:Lcd_define_char	32	static
+../Core/Src/LCD.c:138:6:lcd_write_command	16	static
+../Core/Src/LCD.c:157:6:lcd_write_data	16	static
+../Core/Src/LCD.c:176:6:lcd_write	24	static
