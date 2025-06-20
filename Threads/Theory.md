@@ -8,7 +8,13 @@
 3. [std::thread](#stdthread)
     * [Joinable State](#joinable-state)
     * [Unjoinable State](#unjoinable-state)
-4. [Synchronization Primitives]
+4. [Protecting Shared Data]
+    * [Mutual Exclsuion]
+    * [Lock Gaurds]
+5. [Synchronization]
+    * [Checking Flag and Sleeping]
+    * [Condition Varibale]
+
 5.  Non-Blocking Programming
     * [Lock Free Programming ]
     * [Wait Free Programming ]
@@ -21,25 +27,53 @@
 ## **Process**
 A Process is **an abstraction of a running program**.
 
+A program becomes a process abstarction when the program's binary gets loaded into the memory and into the proper OS structure for process and put into the scheduler queue.
+
 A process is just an instance of an executing program including the current values of:
 -   instruction counter
 -   registers
 -   variables.
 
-### *Process Creation*
+![alt text](image.png)
 
+### *Process Creation*
 Process creation happens every time the process creation **SystemCall** is executed.
 Processes that stay in the background to handle some activity such as emails, printing, and so on are called **daemons**.
 
+### *Inter Process Communication*
+The separate processes can pass messages to each other through all the normal inter-process communication channels (signals, sockets, files,
+pipes, and so on)
+
 ### *Distributed Program*
-In distributed programming an application consists of 
-multiple processes cooperating together over different hosts
-machine.
+In distributed programming an application consists of  multiple processes cooperating together over different hosts machine. 
 
 
 ## **Threads**
 
+#### *Def 1*
 A thread is a *sequence of instructions*, given to the CPU by an application process.
+
+#### *Def 2*
+Threads are an abstraction of a virtual-cpu core from the P.O.V of an Operating System. 
+A single execeution sequence that represents a seperately schedulable task.
+
+#### *Def 3*
+Threads are a unit of conccurrency provided by the OS.
+
+A process is the protected environement that threads run into. A process includes an "Address-Space" plus a translation-map and a Page Table. And Threads runs inside that Address Space of a process. 
+
+### **Parallelism vs Concurrency**
+
+Parallelism is when multiple threads A,B,C run in pararllel on three different cores. 
+<br>
+Concurrency is when multiple threads A,B,C run on a single processor core, and this single core has to handle multiple things at once. It can do so e.g. by time-slicing/context switching between the three threads/tasks.
+  
+
+### **Synchronization vs Mutual-Exclusion**
+Synchronization:    Coordination among threads, usually regarding the shared data (critical-section).
+<br>
+Mutual Exlusion:    Ensuring only one thread enters the critical-section at any time.
+
 
 ### **Hardware-Threads**
 
@@ -135,6 +169,13 @@ So always call `std::thread::join()` before the program exits.
 -   std::mutex
 -   std::lock_guard
 -   std::scoped_lock
+
+### MUTEXES
+
+The most basic mechanism for protecting shared data provided by the C++ Standard is the mutex.
+
+
+
 
 ## Parallel STL Algorithms:
 

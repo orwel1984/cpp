@@ -171,11 +171,16 @@ void InsertionSort(std::vector<T>& A)
     int N = A.size();
     for (int i = 0; i <N-1; ++i)
     {
-        for (int j=i+1; j>0; --j)
+        for (int j=i+1; j>0; --j)  // reverse direction from i-loop
         {
-            if(A[j] < A[j-1]){
-                std::swap(A[j] , A[j-1]);
-            } else{
+            if(A[j] < A[j-1])
+            {
+                // swap is an over-kill here since A[i] could be copied 
+                // at the end of the inner loop, but it makes things easier
+                std::swap(A[j] , A[j-1]); 
+            } 
+            else
+            {
                 break;
             }
         }
@@ -196,10 +201,10 @@ void InsertionSort(std::vector<T>& A)
 // It is not an Adaptive method and will try to sort an already sorted list.
 // It is a Stable sorting method, thus the order of elements is preserved if they are equal.
 // 
-// Worst Case Time Complexity : O(N*log N)
-// Best Case Time Complexity  : O(N*log N)
-// Average Time Complexity    : O(N*log N)
-// Space Complexity           : O(N)
+// Worst Case Time Complexity   : O(N*log N)
+// Best Case Time Complexity     : O(N*log N)
+// Average Time Complexity        : O(N*log N)
+// Space Complexity                     : O(2*N)
 
 // prototypes
 template <typename T> void Split(std::vector<T>& a, std::vector<T>& b, int s, int e);
@@ -209,9 +214,9 @@ template <typename T>
 void MergeSortAlgo(std::vector<T>& v)
 {
     const int N = static_cast<const int>(v.size());    
-    std::vector<T> b(N);   // a temporary array for merge results
+    std::vector<T> res(N);   // a temporary array for merge results
     
-    Split(v, b, 0, N-1);   // Split will start to recursively split list
+    Split(v, res, 0, N-1);   // Split will start to recursively split list
 }
 
 template <typename T>
@@ -244,7 +249,8 @@ void Merge(std::vector<T>& A,
 
     // compare both arrays on left & right,
     // and copy the smallest element into final array b
-    // and increment the indices l or r and i
+    // and increment the indices l or r and b
+    // [CORE] 
     while( l<=mid && r<=end){
         if( A[l] <= A[r]){
             B[b++] = A[l++];
@@ -294,7 +300,10 @@ void Merge(std::vector<T>& A,
 // Best Case Time Complexity  : O(n*log n)
 // Average Time Complexity    : O(n*log n)
 // Space Complexity           : O(1)
-
+//
+// Despite this slow worst-case running time, quicksort is often the 
+// best practical choice for sorting because it is remarkably efficient
+// on average:
 /* 
     This function takes last element A[high] as pivot, 
     places all smaller elements less than pivot to left of it and 
@@ -307,8 +316,8 @@ int Partition(std::vector<T>& A, int low, int high)
     int store = high;
     int pivot = A[high];
 
-    for(; low<high; ){
-
+    for(; low<high; )
+    {
         // keep looking on the left-side for >pivot
         while(A[low] < pivot && low<=high){ 
             ++low;
