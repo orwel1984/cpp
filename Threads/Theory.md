@@ -29,6 +29,8 @@ A Process is **an abstraction of a running program**.
 
 A program becomes a process abstarction when the program's binary gets loaded into the memory and into the proper OS structure for process and put into the scheduler queue.
 
+A process includes an **Address-Space**a plus a translation-map and a **Page Table**. 
+
 A process is just an instance of an executing program including the current values of:
 -   instruction counter
 -   registers
@@ -60,7 +62,7 @@ A single execeution sequence that represents a seperately schedulable task.
 #### *Def 3*
 Threads are a unit of conccurrency provided by the OS.
 
-A process is the protected environement that threads run into. A process includes an "Address-Space" plus a translation-map and a Page Table. And Threads runs inside that Address Space of a process. 
+A process is the protected environement that threads run into. And Threads runs inside that Address Space of a process. 
 
 ### **Parallelism vs Concurrency**
 
@@ -89,7 +91,7 @@ The threads whose instructions are directly being run on the CPU core are called
 These are the threads which the OS manages across the entire system for all processes/applications.
 
 -   The OS schedules Software-Threads for execution on Hardware-Threads.
--   The Total no. of Software-Threads an OS can created is a limited resource.
+-   The Total no. of Software-Threads an OS can create is a limited resource.
 -   It is usually possible to create more Software Threads than the no. of available Hardware Threads on a system. 
 
 -   **OverSubscription**:
@@ -117,7 +119,7 @@ Objects of this class acts as handles to the underlying Software-Threads.
 - An std::thread object always correspond to a unique System-Thread. 
 - No two objects can point to the same System-Thread. 
 - std::thread objects are moveable but not copyable.
-- As soon an std::thread object is created, a thread is scheduled to be launched asynchronously from the current thread.
+- As soon an std::thread object is created, **a thread is scheduled** to be launched asynchronously from the current thread.
 
 ```(c++)
 
